@@ -1,0 +1,108 @@
+#include <iostream>
+using namespace std;
+
+
+struct fordef {
+    string expr;
+    int start, end;
+
+    fordef(int kk, string value, int k)
+    {
+        start = kk;
+        expr = value;
+        end = k;
+    }
+};
+
+bool isdigit(char a) 
+{
+    return (a > 47 and a < 58);
+}
+
+
+class expr {
+public:
+    string value;
+
+    fordef def() 
+    {
+        int k, kk,i=1;
+        int s = value.length();
+
+        k = value.find(')');
+        kk = value.rfind('(', k) + 1;
+        if (k != -1) goto end;
+
+        k = value.find('^');
+        if (k != -1) goto preend;
+       
+        k = value.find('*');
+        if (k != -1) goto preend;
+        k = value.find('/');
+        if (k != -1) goto preend;
+
+        k = value.find('+');
+        if (k != -1) goto preend;
+        k = value.find('-');
+
+        if (k != -1) goto func;
+        
+
+    
+    preend:
+        
+
+        for (; ((k-i) and (isdigit(value[k - i]))); i++);
+        kk = k - i;
+        k++;
+        for (;(k<s and isdigit(value[k])); k++);
+              
+    end:
+        return fordef(kk, value.substr(kk, k-kk), k);
+
+    func:
+        return fordef(-1, value, -1);
+    }
+
+    void siplify() 
+    {
+        fordef q = this->def();
+
+        if (value == q.expr)
+        {
+            value = "123";
+        }
+        else 
+        {
+            expr qq;
+            qq.value = q.expr;
+            qq.siplify();
+
+            //cout << "qwerty\n" << value.substr(0,q.start) << '\n' << qq.value << '\n' << value.substr(q.end, value.length() - q.end) << '\n' << "qwerty\n";
+
+            value = value.substr(0,q.start) + qq.value + value.substr(q.end, value.length() - q.end);
+
+        
+        }
+
+
+    }
+};
+
+
+
+
+
+
+int main()
+{
+    std::string s="21563(1+267)";
+    expr q;
+    q.value = s;
+    q.siplify();
+    cout << q.value;
+
+
+}
+
+
